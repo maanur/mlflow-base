@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: model-mlflow-template
+  name: model-mlflow-build-template
   annotations:
     description: "Template for deploying exported MLFlow model"
     tags: "model,mlflow"
@@ -48,17 +48,17 @@ objects:
           valueFrom:
             secretKeyRef:
               key: AWS_ACCESS_KEY_ID
-              name: s3-access-credentials
+              name: model-${MODELNAME}-${MODELVERSION}
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               key: AWS_SECRET_ACCESS_KEY
-              name: s3-access-credentials
+              name: model-${MODELNAME}-${MODELVERSION}
         - name: MLFLOW_S3_ENDPOINT_URL
           valueFrom:
             secretKeyRef:
               key: MLFLOW_S3_ENDPOINT_URL
-              name: s3-access-credentials
+              name: model-${MODELNAME}-${MODELVERSION}
         from:
           kind: ImageStreamTag
           name: mlflow-base:latest
@@ -77,7 +77,7 @@ objects:
   metadata:
     labels:
       app: model-${MODELNAME}-${MODELVERSION}
-    name: s3-access-credentials
+    name: model-${MODELNAME}-${MODELVERSION}
   stringData:
     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
